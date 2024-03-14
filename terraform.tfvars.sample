@@ -1,0 +1,10 @@
+network={
+    project-id="meijer-gcp-core-842352947916e",
+    vpc-name="vpc-1"
+    subnetwork-name = "subnet-1"
+    region = "us-east4"
+}
+
+ilb-zones=["us-east4-a", "us-east4-b"]
+
+source-image="debian-cloud/debian-11"
