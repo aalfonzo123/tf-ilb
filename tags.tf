@@ -19,3 +19,18 @@ resource "google_tags_tag_value" "content-backend" {
   short_name  = "backend"
   description = "backend content"
 }
+
+variable "roles" {
+  type        = list(string)
+  description = "The roles that will be granted to the service account."
+  default     = ["roles/resourcemanager.tagUser"]
+}
+
+
+# Without this iam binding, the instance group will
+# not be able to attach the tag to new VMS
+resource "google_project_iam_member" "sa_iam" {
+  role    = "roles/resourcemanager.tagUser"
+  project = data.google_project.project.project_id
+  member  = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
+}

@@ -51,9 +51,6 @@ resource "google_compute_network_firewall_policy_rule" "fw-allow-iap-ssh-backend
   firewall_policy = google_compute_network_firewall_policy.content-fw-policy.name
   priority        = 1001
   rule_name       = "fw-allow-iap-ssh-backend"
-  target_secure_tags {
-    name = google_tags_tag_value.content-backend.id
-  }
 
   match {
     # Google Cloud health checking systems
@@ -65,7 +62,6 @@ resource "google_compute_network_firewall_policy_rule" "fw-allow-iap-ssh-backend
   }
 }
 
-# optional: for inter-subnet communication
 resource "google_compute_network_firewall_policy_rule" "fw-allow-inter-backend" {
   project         = data.google_project.project.id
   action          = "allow"
@@ -74,17 +70,12 @@ resource "google_compute_network_firewall_policy_rule" "fw-allow-inter-backend" 
   firewall_policy = google_compute_network_firewall_policy.content-fw-policy.name
   priority        = 1002
   rule_name       = "fw-allow-inter-backend"
-  target_secure_tags {
-    name = google_tags_tag_value.content-backend.id
-  }
 
   match {
-    src_secure_tags {
-      name = google_tags_tag_value.content-backend.id
-    }
+    src_ip_ranges = [data.google_compute_subnetwork.subnetwork.ip_cidr_range]
     layer4_configs {
       ip_protocol = "tcp"
-      ports       = [800]
+      ports       = [800, 900]
     }
   }
 }
